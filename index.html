@@ -25,8 +25,10 @@
             --accent2: #a594fa;
             --green: #3ecf8e;
             --green-bg: #0d2a1e;
+            --green-border: #1a5c3a;
             --red: #f06060;
             --red-bg: #2a0d0d;
+            --red-border: #5c1a1a;
             --mono: 'Space Mono', monospace;
             --sans: 'DM Sans', sans-serif;
         }
@@ -79,6 +81,10 @@
             background: var(--bg2);
             color: var(--muted);
             cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.88rem;
+            white-space: nowrap;
+            transition: all 0.15s;
         }
 
         .inv-tab.active {
@@ -87,11 +93,16 @@
             border-color: var(--accent);
         }
 
+        .inv-tab:hover:not(.active) {
+            color: var(--text);
+            border-color: #3a3a48;
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.25rem;
         }
 
         .stat-card {
@@ -105,6 +116,7 @@
             font-size: 0.75rem;
             color: var(--muted);
             text-transform: uppercase;
+            letter-spacing: .07em;
             margin-bottom: 0.5rem;
         }
 
@@ -114,24 +126,50 @@
             font-weight: 700;
         }
 
+        .progress-wrap {
+            margin-bottom: 2rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .progress-pct {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            color: var(--accent2);
+        }
+
         .progress-track {
             height: 8px;
             background: var(--bg3);
             border-radius: 99px;
             overflow: hidden;
-            margin: 1rem 0 2rem;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--accent), var(--green));
-            transition: width 0.5s;
+            transition: width 0.5s ease;
         }
 
         .panels {
             display: grid;
             grid-template-columns: 1fr 1.5fr;
             gap: 1.5rem;
+        }
+
+        @media (max-width: 700px) {
+            .panels {
+                grid-template-columns: 1fr;
+            }
         }
 
         .panel {
@@ -141,14 +179,107 @@
             padding: 1.5rem;
         }
 
+        .panel-title {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            margin-bottom: 1rem;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
         .history-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 0.75rem;
             padding: 0.75rem;
             border-radius: 8px;
             background: var(--bg3);
-            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .hi-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .hi-badge.gain {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .hi-badge.cost {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+
+        .hi-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .hi-desc {
+            font-size: 0.88rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hi-date {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .hi-val {
+            font-family: var(--mono);
+            font-size: 0.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .hi-val.pos {
+            color: var(--green);
+        }
+
+        .hi-val.neg {
+            color: var(--red);
+        }
+
+        .hi-del {
+            background: none;
+            border: none;
+            color: var(--dim);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 2px 4px;
+            border-radius: 4px;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+
+        .hi-del:hover {
+            color: var(--red);
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--dim);
+            font-size: 0.85rem;
+            padding: 2rem 0;
         }
 
         .btn-primary {
@@ -158,6 +289,13 @@
             border-radius: 8px;
             padding: 0.6rem 1.2rem;
             cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            transition: background 0.15s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent2);
         }
 
         .btn-ghost {
@@ -167,6 +305,14 @@
             border-radius: 8px;
             padding: 0.6rem 1.2rem;
             cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            transition: all 0.15s;
+        }
+
+        .btn-ghost:hover {
+            color: var(--text);
+            border-color: #3a3a48;
         }
 
         .modal-backdrop {
@@ -178,6 +324,7 @@
             justify-content: center;
             backdrop-filter: blur(4px);
             z-index: 100;
+            padding: 1rem;
         }
 
         .modal-backdrop.open {
@@ -189,8 +336,13 @@
             padding: 2rem;
             border-radius: 16px;
             width: 100%;
-            max-width: 400px;
-            border: 1px solid var(--border);
+            max-width: 420px;
+            border: 1px solid #3a3a48;
+        }
+
+        .modal h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
         }
 
         .field {
@@ -199,8 +351,10 @@
 
         .field label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
             margin-bottom: 0.4rem;
         }
 
@@ -208,10 +362,63 @@
         .field textarea {
             width: 100%;
             background: var(--bg3);
-            border: 1px solid var(--border);
-            padding: 0.7rem;
+            border: 1px solid #3a3a48;
+            padding: 0.7rem 0.9rem;
             color: #fff;
             border-radius: 8px;
+            font-family: var(--sans);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--accent);
+        }
+
+        /* Type toggle */
+        .type-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .type-btn {
+            padding: 0.65rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--muted);
+            cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            text-align: center;
+            transition: all 0.15s;
+        }
+
+        .type-btn:hover {
+            border-color: #3a3a48;
+            color: var(--text);
+        }
+
+        .type-btn.sel-gain {
+            background: var(--green-bg);
+            border-color: var(--green-border);
+            color: var(--green);
+        }
+
+        .type-btn.sel-cost {
+            background: var(--red-bg);
+            border-color: var(--red-border);
+            color: var(--red);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
         }
 
         .pos {
@@ -221,13 +428,26 @@
         .neg {
             color: var(--red);
         }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 99px;
+        }
     </style>
 </head>
 
 <body>
 
     <header>
-        <div class="logo">ROI<span>_</span>Tracker</div>
+        <div class="logo">ROI_Tracker</div>
         <div style="display:flex; gap:0.75rem;">
             <button class="btn-ghost" onclick="openModal('newInvModal')">+ Investimento</button>
             <button class="btn-primary" onclick="openModal('entryModal')">+ Registro</button>
@@ -237,56 +457,86 @@
     <main id="app">
         <div class="inv-tabs" id="invTabs"></div>
         <div class="stats" id="statsRow"></div>
-        <div class="progress-track" id="progressTrack">
-            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+
+        <div class="progress-wrap">
+            <div class="progress-header">
+                <span class="progress-label">Progresso de retorno</span>
+                <span class="progress-pct" id="progressPct">0%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width:0%"></div>
+            </div>
         </div>
 
         <div class="panels">
             <div class="panel">
-                <div class="stat-label">Resumo</div>
+                <div class="panel-title">Resumo</div>
                 <div id="invSummary"></div>
             </div>
             <div class="panel">
-                <div class="stat-label">Histórico</div>
-                <div id="historyList"></div>
+                <div class="panel-title">Histórico</div>
+                <div class="history-list" id="historyList"></div>
             </div>
         </div>
     </main>
 
+    <!-- Modal: Novo Registro -->
     <div class="modal-backdrop" id="entryModal">
         <div class="modal">
-            <h3>Novo Registro</h3><br>
+            <h3 id="entryModalTitle">Novo Registro</h3>
+
+            <div class="field">
+                <label>Tipo</label>
+                <div class="type-toggle">
+                    <div class="type-btn sel-gain" id="btnGain" onclick="setEntryType('gain')">↑ Lucro / Economia</div>
+                    <div class="type-btn" id="btnCost" onclick="setEntryType('cost')">↓ Gasto / Peça</div>
+                </div>
+            </div>
+
             <div class="field">
                 <label>Valor (R$)</label>
-                <input type="number" id="entryValue" step="0.01">
+                <input type="number" id="entryValue" step="0.01" min="0" placeholder="0,00">
             </div>
+
             <div class="field">
                 <label>Descrição</label>
-                <input type="text" id="entryDesc">
+                <input type="text" id="entryDesc" placeholder="Ex: Volei segunda, Câmara nova...">
             </div>
-            <button class="btn-primary" onclick="saveEntry()">Salvar</button>
-            <button class="btn-ghost" onclick="closeModal('entryModal')">Voltar</button>
+
+            <div class="field">
+                <label>Data</label>
+                <input type="date" id="entryDate">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-ghost" onclick="closeModal('entryModal')">Cancelar</button>
+                <button class="btn-primary" onclick="saveEntry()">Salvar</button>
+            </div>
         </div>
     </div>
 
+    <!-- Modal: Novo Investimento -->
     <div class="modal-backdrop" id="newInvModal">
         <div class="modal">
-            <h3>Novo Investimento</h3><br>
+            <h3>Novo Investimento</h3>
+
             <div class="field">
                 <label>Nome</label>
-                <input type="text" id="invName">
+                <input type="text" id="invName" placeholder="Ex: Bicicleta, Câmera...">
             </div>
             <div class="field">
-                <label>Custo Inicial</label>
-                <input type="number" id="invCost" step="0.01">
+                <label>Custo Inicial (R$)</label>
+                <input type="number" id="invCost" step="0.01" min="0" placeholder="0,00">
             </div>
-            <button class="btn-primary" onclick="saveInvestment()">Criar</button>
-            <button class="btn-ghost" onclick="closeModal('newInvModal')">Voltar</button>
+
+            <div class="modal-footer">
+                <button class="btn-ghost" onclick="closeModal('newInvModal')">Cancelar</button>
+                <button class="btn-primary" onclick="saveInvestment()">Criar</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // 1. Configurações Fixas
         const firebaseConfig = {
             apiKey: "AIzaSyCrybby-BUl_Vi-xb6SSr4pWYwZ2U-2gDU",
             authDomain: "investback-6e7d7.firebaseapp.com",
@@ -296,14 +546,15 @@
             appId: "1:100961108147:web:d765b8f7f356742ff2f0c6"
         };
 
-        // 2. Inicialização
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         let investments = [];
         let currentInvId = null;
+        let currentEntryType = 'gain'; // 'gain' | 'cost'
+        let unsubEntries = null;
 
-        // 3. Funções de Dados
+        // ── INIT ──────────────────────────────────────────────────────────────
         function init() {
             db.collection('investments').orderBy('createdAt', 'desc').onSnapshot(snap => {
                 investments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -315,16 +566,18 @@
 
         function loadEntries() {
             if (!currentInvId) return;
-            db.collection('investments').doc(currentInvId).collection('entries').orderBy('date', 'desc').onSnapshot(snap => {
-                const entries = snap.docs.map(d => d.data());
-                renderDashboard(entries);
-            });
+            if (unsubEntries) unsubEntries();
+            unsubEntries = db.collection('investments').doc(currentInvId)
+                .collection('entries').orderBy('date', 'desc')
+                .onSnapshot(snap => {
+                    const entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderDashboard(entries);
+                });
         }
 
-        // 4. Renderização
+        // ── RENDER ────────────────────────────────────────────────────────────
         function renderTabs() {
-            const container = document.getElementById('invTabs');
-            container.innerHTML = investments.map(inv => `
+            document.getElementById('invTabs').innerHTML = investments.map(inv => `
                 <button class="inv-tab ${inv.id === currentInvId ? 'active' : ''}" onclick="selectInv('${inv.id}')">
                     ${inv.name}
                 </button>
@@ -333,46 +586,153 @@
 
         function renderDashboard(entries) {
             const inv = investments.find(i => i.id === currentInvId);
-            const totalIn = entries.reduce((acc, e) => acc + (parseFloat(e.value) || 0), 0);
-            const totalOut = inv.cost || 0;
-            const pct = Math.min(100, (totalIn / totalOut) * 100 || 0);
+            if (!inv) return;
+
+            const fmt = v => 'R$ ' + Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            // value > 0 = lucro/economia | value < 0 = gasto/peça extra
+            const totalGains = entries.filter(e => e.value > 0).reduce((s, e) => s + e.value, 0);
+            const extraCosts = entries.filter(e => e.value < 0).reduce((s, e) => s + Math.abs(e.value), 0);
+            const totalInvested = (inv.cost || 0) + extraCosts;
+            const balance = totalGains - totalInvested;
+            const pct = totalInvested > 0 ? Math.min(100, (totalGains / totalInvested) * 100) : 0;
 
             document.getElementById('statsRow').innerHTML = `
-                <div class="stat-card"><div class="stat-label">Investido</div><div class="stat-value">R$ ${totalOut.toFixed(2)}</div></div>
-                <div class="stat-card"><div class="stat-label">Retorno</div><div class="stat-value pos">R$ ${totalIn.toFixed(2)}</div></div>
-                <div class="stat-card"><div class="stat-label">Falta</div><div class="stat-value neg">R$ ${(totalOut - totalIn).toFixed(2)}</div></div>
-            `;
-            document.getElementById('progressFill').style.width = pct + '%';
-
-            document.getElementById('historyList').innerHTML = entries.map(e => `
-                <div class="history-item">
-                    <span>${e.description}</span>
-                    <span class="pos">+ R$ ${e.value.toFixed(2)}</span>
+                <div class="stat-card">
+                    <div class="stat-label">Total Investido</div>
+                    <div class="stat-value neg">${fmt(totalInvested)}</div>
                 </div>
-            `).join('') || '<p>Sem registros.</p>';
+                <div class="stat-card">
+                    <div class="stat-label">Total Recuperado</div>
+                    <div class="stat-value pos">${fmt(totalGains)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Saldo</div>
+                    <div class="stat-value ${balance >= 0 ? 'pos' : 'neg'}">${balance >= 0 ? '' : '-'}${fmt(balance)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ROI</div>
+                    <div class="stat-value" style="color:${pct >= 100 ? 'var(--green)' : 'var(--text)'}">${pct.toFixed(1)}%</div>
+                </div>
+            `;
+
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPct').textContent = pct.toFixed(1) + '%';
+
+            document.getElementById('invSummary').innerHTML = `
+                <div style="display:flex;flex-direction:column;gap:0.9rem;">
+                    <div>
+                        <div class="stat-label">Investimento</div>
+                        <div style="font-weight:500;">${inv.name}</div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                        <div style="background:var(--bg3);border-radius:8px;padding:.75rem;">
+                            <div class="stat-label" style="margin-bottom:3px;">Custo Inicial</div>
+                            <div style="font-family:var(--mono);color:var(--red);font-size:1rem;">${fmt(inv.cost || 0)}</div>
+                        </div>
+                        <div style="background:var(--bg3);border-radius:8px;padding:.75rem;">
+                            <div class="stat-label" style="margin-bottom:3px;">Gastos Extra</div>
+                            <div style="font-family:var(--mono);color:var(--red);font-size:1rem;">${fmt(extraCosts)}</div>
+                        </div>
+                    </div>
+                    <div style="background:var(--bg3);border-radius:8px;padding:.75rem;">
+                        <div class="stat-label" style="margin-bottom:3px;">Falta recuperar</div>
+                        <div style="font-family:var(--mono);color:${balance >= 0 ? 'var(--green)' : 'var(--red)'};font-size:1.1rem;">
+                            ${balance >= 0 ? '🎉 Retorno completo!' : '-' + fmt(balance)}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const list = document.getElementById('historyList');
+            if (!entries.length) {
+                list.innerHTML = '<div class="empty">Nenhum registro ainda.<br>Use o botão + Registro.</div>';
+                return;
+            }
+            list.innerHTML = entries.map(e => {
+                const isGain = e.value > 0;
+                const d = new Date(e.date + 'T12:00:00').toLocaleDateString('pt-BR');
+                return `
+                <div class="history-item">
+                    <div class="hi-badge ${isGain ? 'gain' : 'cost'}">${isGain ? '↑' : '↓'}</div>
+                    <div class="hi-info">
+                        <div class="hi-desc">${e.description || (isGain ? 'Lucro/Economia' : 'Gasto/Peça')}</div>
+                        <div class="hi-date">${d}</div>
+                    </div>
+                    <div class="hi-val ${isGain ? 'pos' : 'neg'}">${isGain ? '+' : '-'}${fmt(e.value)}</div>
+                    <button class="hi-del" onclick="deleteEntry('${e.id}')" title="Excluir">×</button>
+                </div>`;
+            }).join('');
         }
 
-        // 5. Ações
-        function selectInv(id) { currentInvId = id; renderTabs(); loadEntries(); }
-        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        // ── ACTIONS ───────────────────────────────────────────────────────────
+        function selectInv(id) {
+            currentInvId = id;
+            renderTabs();
+            loadEntries();
+        }
+
+        function openModal(id) {
+            if (id === 'entryModal') {
+                if (!currentInvId) return alert('Selecione um investimento primeiro.');
+                const inv = investments.find(i => i.id === currentInvId);
+                document.getElementById('entryModalTitle').textContent = 'Novo Registro' + (inv ? ' — ' + inv.name : '');
+                setEntryType('gain');
+                document.getElementById('entryValue').value = '';
+                document.getElementById('entryDesc').value = '';
+                document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+            }
+            document.getElementById(id).classList.add('open');
+        }
+
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-        async function saveInvestment() {
-            const name = document.getElementById('invName').value;
-            const cost = parseFloat(document.getElementById('invCost').value);
-            if (!name || !cost) return alert('Preencha tudo');
-            await db.collection('investments').add({ name, cost, createdAt: new Date() });
-            closeModal('newInvModal');
+        document.querySelectorAll('.modal-backdrop').forEach(b => {
+            b.addEventListener('click', e => { if (e.target === b) b.classList.remove('open'); });
+        });
+
+        function setEntryType(type) {
+            currentEntryType = type;
+            document.getElementById('btnGain').className = 'type-btn' + (type === 'gain' ? ' sel-gain' : '');
+            document.getElementById('btnCost').className = 'type-btn' + (type === 'cost' ? ' sel-cost' : '');
         }
 
         async function saveEntry() {
-            const value = parseFloat(document.getElementById('entryValue').value);
-            const description = document.getElementById('entryDesc').value;
-            if (!value || !currentInvId) return alert('Erro nos dados');
+            const raw = parseFloat(document.getElementById('entryValue').value);
+            const description = document.getElementById('entryDesc').value.trim();
+            const date = document.getElementById('entryDate').value;
+
+            if (!raw || raw <= 0) return alert('Informe um valor válido.');
+            if (!date) return alert('Informe a data.');
+
+            // Positivo = lucro/economia | Negativo = gasto/peça
+            const value = currentEntryType === 'gain' ? raw : -raw;
+
             await db.collection('investments').doc(currentInvId).collection('entries').add({
-                value, description, date: new Date().toISOString()
+                value,
+                description,
+                date,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             closeModal('entryModal');
+        }
+
+        async function saveInvestment() {
+            const name = document.getElementById('invName').value.trim();
+            const cost = parseFloat(document.getElementById('invCost').value);
+            if (!name || !cost) return alert('Preencha nome e custo.');
+            await db.collection('investments').add({
+                name, cost,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById('invName').value = '';
+            document.getElementById('invCost').value = '';
+            closeModal('newInvModal');
+        }
+
+        async function deleteEntry(id) {
+            if (!confirm('Excluir este registro?')) return;
+            await db.collection('investments').doc(currentInvId).collection('entries').doc(id).delete();
         }
 
         window.onload = init;
