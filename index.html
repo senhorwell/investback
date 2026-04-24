@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Tracker - Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --bg: #0d0d0f;
+            --bg2: #141418;
+            --bg3: #1a1a20;
+            --border: #2a2a35;
+            --text: #e8e8f0;
+            --muted: #7a7a90;
+            --dim: #4a4a60;
+            --accent: #7c6af7;
+            --accent2: #a594fa;
+            --green: #3ecf8e;
+            --green-bg: #0d2a1e;
+            --red: #f06060;
+            --red-bg: #2a0d0d;
+            --mono: 'Space Mono', monospace;
+            --sans: 'DM Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg2);
+        }
+
+        .logo {
+            font-family: var(--mono);
+            font-size: 1.1rem;
+            color: var(--accent2);
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .inv-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .inv-tab {
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg2);
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .inv-tab.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: var(--mono);
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: var(--bg3);
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 1rem 0 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--green));
+            transition: width 0.5s;
+        }
+
+        .panels {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 1.5rem;
+        }
+
+        .panel {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background: var(--bg3);
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            z-index: 100;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg2);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border);
+        }
+
+        .field {
+            margin-bottom: 1rem;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            padding: 0.7rem;
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        .pos {
+            color: var(--green);
+        }
+
+        .neg {
+            color: var(--red);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">ROI<span>_</span>Tracker</div>
+        <div style="display:flex; gap:0.75rem;">
+            <button class="btn-ghost" onclick="openModal('newInvModal')">+ Investimento</button>
+            <button class="btn-primary" onclick="openModal('entryModal')">+ Registro</button>
+        </div>
+    </header>
+
+    <main id="app">
+        <div class="inv-tabs" id="invTabs"></div>
+        <div class="stats" id="statsRow"></div>
+        <div class="progress-track" id="progressTrack">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <div class="panels">
+            <div class="panel">
+                <div class="stat-label">Resumo</div>
+                <div id="invSummary"></div>
+            </div>
+            <div class="panel">
+                <div class="stat-label">Histórico</div>
+                <div id="historyList"></div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-backdrop" id="entryModal">
+        <div class="modal">
+            <h3>Novo Registro</h3><br>
+            <div class="field">
+                <label>Valor (R$)</label>
+                <input type="number" id="entryValue" step="0.01">
+            </div>
+            <div class="field">
+                <label>Descrição</label>
+                <input type="text" id="entryDesc">
+            </div>
+            <button class="btn-primary" onclick="saveEntry()">Salvar</button>
+            <button class="btn-ghost" onclick="closeModal('entryModal')">Voltar</button>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="newInvModal">
+        <div class="modal">
+            <h3>Novo Investimento</h3><br>
+            <div class="field">
+                <label>Nome</label>
+                <input type="text" id="invName">
+            </div>
+            <div class="field">
+                <label>Custo Inicial</label>
+                <input type="number" id="invCost" step="0.01">
+            </div>
+            <button class="btn-primary" onclick="saveInvestment()">Criar</button>
+            <button class="btn-ghost" onclick="closeModal('newInvModal')">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Configurações Fixas
+        const firebaseConfig = {
+            apiKey: "AIzaSyCrybby-BUl_Vi-xb6SSr4pWYwZ2U-2gDU",
+            authDomain: "investback-6e7d7.firebaseapp.com",
+            projectId: "investback-6e7d7",
+            storageBucket: "investback-6e7d7.appspot.com",
+            messagingSenderId: "100961108147",
+            appId: "1:100961108147:web:d765b8f7f356742ff2f0c6"
+        };
+
+        // 2. Inicialização
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let investments = [];
+        let currentInvId = null;
+
+        // 3. Funções de Dados
+        function init() {
+            db.collection('investments').orderBy('createdAt', 'desc').onSnapshot(snap => {
+                investments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (!currentInvId && investments.length) currentInvId = investments[0].id;
+                renderTabs();
+                loadEntries();
+            });
+        }
+
+        function loadEntries() {
+            if (!currentInvId) return;
+            db.collection('investments').doc(currentInvId).collection('entries').orderBy('date', 'desc').onSnapshot(snap => {
+                const entries = snap.docs.map(d => d.data());
+                renderDashboard(entries);
+            });
+        }
+
+        // 4. Renderização
+        function renderTabs() {
+            const container = document.getElementById('invTabs');
+            container.innerHTML = investments.map(inv => `
+                <button class="inv-tab ${inv.id === currentInvId ? 'active' : ''}" onclick="selectInv('${inv.id}')">
+                    ${inv.name}
+                </button>
+            `).join('');
+        }
+
+        function renderDashboard(entries) {
+            const inv = investments.find(i => i.id === currentInvId);
+            const totalIn = entries.reduce((acc, e) => acc + (parseFloat(e.value) || 0), 0);
+            const totalOut = inv.cost || 0;
+            const pct = Math.min(100, (totalIn / totalOut) * 100 || 0);
+
+            document.getElementById('statsRow').innerHTML = `
+                <div class="stat-card"><div class="stat-label">Investido</div><div class="stat-value">R$ ${totalOut.toFixed(2)}</div></div>
+                <div class="stat-card"><div class="stat-label">Retorno</div><div class="stat-value pos">R$ ${totalIn.toFixed(2)}</div></div>
+                <div class="stat-card"><div class="stat-label">Falta</div><div class="stat-value neg">R$ ${(totalOut - totalIn).toFixed(2)}</div></div>
+            `;
+            document.getElementById('progressFill').style.width = pct + '%';
+
+            document.getElementById('historyList').innerHTML = entries.map(e => `
+                <div class="history-item">
+                    <span>${e.description}</span>
+                    <span class="pos">+ R$ ${e.value.toFixed(2)}</span>
+                </div>
+            `).join('') || '<p>Sem registros.</p>';
+        }
+
+        // 5. Ações
+        function selectInv(id) { currentInvId = id; renderTabs(); loadEntries(); }
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+        async function saveInvestment() {
+            const name = document.getElementById('invName').value;
+            const cost = parseFloat(document.getElementById('invCost').value);
+            if (!name || !cost) return alert('Preencha tudo');
+            await db.collection('investments').add({ name, cost, createdAt: new Date() });
+            closeModal('newInvModal');
+        }
+
+        async function saveEntry() {
+            const value = parseFloat(document.getElementById('entryValue').value);
+            const description = document.getElementById('entryDesc').value;
+            if (!value || !currentInvId) return alert('Erro nos dados');
+            await db.collection('investments').doc(currentInvId).collection('entries').add({
+                value, description, date: new Date().toISOString()
+            });
+            closeModal('entryModal');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>
